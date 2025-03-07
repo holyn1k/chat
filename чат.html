@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .chat-box {
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Главная страница -->
+    <div id="home" class="container">
+        <h1>Добро пожаловать в чат!</h1>
+        <button onclick="showSection('login')">Войти</button>
+        <button onclick="showSection('register')">Зарегистрироваться</button>
+    </div>
+
+    <!-- Страница входа -->
+    <div id="login" class="container hidden">
+        <h1>Вход</h1>
+        <input type="text" id="loginUsername" placeholder="Логин" required>
+        <input type="password" id="loginPassword" placeholder="Пароль" required>
+        <button onclick="login()">Войти</button>
+        <p>Нет аккаунта? <a href="#" onclick="showSection('register')">Зарегистрируйтесь</a></p>
+    </div>
+
+    <!-- Страница регистрации -->
+    <div id="register" class="container hidden">
+        <h1>Регистрация</h1>
+        <input type="text" id="registerUsername" placeholder="Логин" required>
+        <input type="password" id="registerPassword" placeholder="Пароль" required>
+        <button onclick="register()">Зарегистрироваться</button>
+        <p>Уже есть аккаунт? <a href="#" onclick="showSection('login')">Войдите</a></p>
+    </div>
+
+    <!-- Страница чата -->
+    <div id="chat" class="container hidden">
+        <h1>Чат</h1>
+        <div class="chat-box" id="chat-box">
+            <p><strong>Система:</strong> Добро пожаловать в чат!</p>
+        </div>
+        <input type="text" id="message" placeholder="Введите сообщение">
+        <button onclick="sendMessage()">Отправить</button>
+    </div>
+
+    <script>
+        // Функция для переключения между разделами
+        function showSection(sectionId) {
+            // Скрываем все разделы
+            document.querySelectorAll('.container').forEach(div => {
+                div.classList.add('hidden');
+            });
+            // Показываем выбранный раздел
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Функция для регистрации пользователя
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            // Проверка, что поля не пустые
+            if (!username || !password) {
+                alert("Заполните все поля!");
+                return;
+            }
+
+            // Сохранение пользователя в LocalStorage
+            const user = {
+                username: username,
+                password: password
+            };
+
+            localStorage.setItem(username, JSON.stringify(user));
+            alert("Регистрация успешна!");
+            showSection('login');
+        }
+
+        // Функция для входа пользователя
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Получение данных пользователя из LocalStorage
+            const user = JSON.parse(localStorage.getItem(username));
+
+            if (user && user.password === password) {
+                alert("Вход выполнен!");
+                showSection('chat');
+            } else {
+                alert("Неверный логин или пароль!");
+            }
+        }
+
+        // Функция для отправки сообщения в чат
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            const chatBox = document.getElementById('chat-box');
+
+            if (message) {
+                chatBox.innerHTML += `<p><strong>Вы:</strong> ${message}</p>`;
+                document.getElementById('message').value = ''; // Очистка поля ввода
+                chatBox.scrollTop = chatBox.scrollHeight; // Прокрутка вниз
+            }
+        }
+    </script>
+</body>
+</html>
